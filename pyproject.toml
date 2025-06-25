@@ -1,7 +1,7 @@
 [project]
-name = "a3data"
+name = "sentiment-analysis"
 version = "0.1.0"
-description = "Teste técnico"
+description = ""
 authors = [
     {name = "andrerizzo@hotmail.com",email = "andrerizzo@gmail.com"}
 ]
