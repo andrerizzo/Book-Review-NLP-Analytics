@@ -1,0 +1,22 @@
+## Arquivos
+*.csv
+*.parquet
+*.db
+*.pptx
+.gitattributes
+
+# Pastas
+referencias
+resultados
+db
+old
+logs
+__pycache__
+.venv
+.env
+
+# Outros
+.devcontainer
+
+
+
