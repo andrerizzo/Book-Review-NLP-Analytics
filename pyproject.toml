@@ -1,5 +1,5 @@
 [project]
-name = "sentiment-analysis"
+name = "Book_Review_NLP_Analytics"
 version = "0.1.0"
 description = ""
 authors = [
