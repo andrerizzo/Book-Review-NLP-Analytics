@@ -4,10 +4,10 @@ Análises de negócio para tomada de decisão
 Adicionado: Funções para busca de livros e reviews para resumo IA
 """
 
-import sqlite3
-import pandas as pd
 import os
 from pathlib import Path
+import sqlite3
+import pandas as pd
 
 
 def execute_query(query: str, db_path: str = "books_database.db", params: tuple = ()) -> pd.DataFrame:
@@ -25,9 +25,15 @@ def execute_query(query: str, db_path: str = "books_database.db", params: tuple 
     # Verificar se banco existe
     if not os.path.exists(db_path):
         raise FileNotFoundError(f"Banco de dados não encontrado: {db_path}")
-    
+
     try:
         with sqlite3.connect(db_path) as conn:
+            # REGISTRA A FUNÇÃO LOG AO CONECTAR
+            import math
+            conn.create_function("LOG", 1, math.log)
+            conn.create_function("LOG10", 1, math.log10)
+            conn.create_function("SQRT", 1, math.sqrt)
+
             return pd.read_sql_query(query, conn, params=params)
     except Exception as e:
         print(f"Erro na consulta: {e}")
