@@ -19,7 +19,8 @@ def download_database():
     db_path = "books_database.db"
     if not os.path.exists(db_path):
         st.info("Baixando banco de dados do Google Drive...")
-        url = "https://drive.google.com/file/d/1xDblPfCXZwKcmHJ1rtJLQSmlGRhYGkeg/view?usp=sharing"  # Link do arquivo no GDrive
+        #url = "https://drive.google.com/file/d/1xDblPfCXZwKcmHJ1rtJLQSmlGRhYGkeg/view?usp=sharing"  # Link do arquivo no GDrive
+        url = "https://drive.google.com/file/d/1xDblPfCXZwKcmHJ1rtJLQSmlGRhYGkeg"
         gdown.download(url, db_path, quiet=False)
         st.success("Banco de dados baixado com sucesso!")
     else:
