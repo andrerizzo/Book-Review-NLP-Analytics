@@ -374,7 +374,7 @@ def get_sentiment_discrepancies(limit: int = 50, db_path: str = "books_database.
 # =================
 
 def get_best_worst_books(limit: int = 20, db_path: str = "books_database.db") -> dict:
-   """
+    """
     Identifica livros com melhor e pior desempenho - SQLite compatible
     """
     
@@ -471,8 +471,6 @@ def get_best_worst_books(limit: int = 20, db_path: str = "books_database.db") ->
         'melhores': best_books,
         'piores': worst_books
     }
-
-
 
 # =================
 # 7. ANÁLISE DE DESEMPENHO DE EDITORAS
