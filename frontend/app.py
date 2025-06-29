@@ -1644,6 +1644,9 @@ def create_alert_box(message, alert_type="info"):
 
 
 if __name__ == "__main__":
+    
+    download_database()
+    
     # Verificar se o banco existe
     db_path = "books_database.db"
     if not os.path.exists(db_path):
