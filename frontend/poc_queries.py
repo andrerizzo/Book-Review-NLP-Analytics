@@ -374,11 +374,8 @@ def get_sentiment_discrepancies(limit: int = 50, db_path: str = "books_database.
 # =================
 
 def get_best_worst_books(limit: int = 20, db_path: str = "books_database.db") -> dict:
-    """
-    Identifica livros com melhor e pior desempenho baseado em:
-    - Sentimento médio
-    - Volume de reviews
-    - Percentual de reviews positivos
+   """
+    Identifica livros com melhor e pior desempenho - SQLite compatible
     """
     
     # Query para melhores livros
@@ -392,11 +389,16 @@ def get_best_worst_books(limit: int = 20, db_path: str = "books_database.db") ->
             AVG(r.compound) as sentimento_medio,
             SUM(CASE WHEN r.sentimento = 'positivo' THEN 1 ELSE 0 END) * 100.0 / COUNT(r.sentimento) as pct_positivo,
             
-            -- Score de performance (quanto maior, melhor)
+            -- Score de performance (sem LOG)
             (
                 (AVG(r.compound) + 1) * 50 +  -- Sentimento normalizado (0-100)
                 (SUM(CASE WHEN r.sentimento = 'positivo' THEN 1 ELSE 0 END) * 100.0 / COUNT(r.sentimento)) * 0.3 +  -- % positivo
-                LOG(COUNT(r.sentimento) + 1) * 5  -- Volume (log para suavizar)
+                (CASE 
+                    WHEN COUNT(r.sentimento) <= 10 THEN 5
+                    WHEN COUNT(r.sentimento) <= 50 THEN 15
+                    WHEN COUNT(r.sentimento) <= 100 THEN 25
+                    ELSE 35
+                END)  -- Volume escalonado
             ) as performance_score
             
         FROM books_data_processed b
@@ -430,11 +432,16 @@ def get_best_worst_books(limit: int = 20, db_path: str = "books_database.db") ->
             AVG(r.compound) as sentimento_medio,
             SUM(CASE WHEN r.sentimento = 'negativo' THEN 1 ELSE 0 END) * 100.0 / COUNT(r.sentimento) as pct_negativo,
             
-            -- Score de problema (quanto maior, pior)
+            -- Score de problema (sem LOG)
             (
                 (1 - AVG(r.compound)) * 50 +  -- Sentimento ruim normalizado
                 (SUM(CASE WHEN r.sentimento = 'negativo' THEN 1 ELSE 0 END) * 100.0 / COUNT(r.sentimento)) * 0.5 +  -- % negativo
-                LOG(COUNT(r.sentimento) + 1) * 2  -- Volume
+                (CASE 
+                    WHEN COUNT(r.sentimento) <= 10 THEN 2
+                    WHEN COUNT(r.sentimento) <= 50 THEN 6
+                    WHEN COUNT(r.sentimento) <= 100 THEN 10
+                    ELSE 14
+                END)  -- Volume
             ) as problema_score
             
         FROM books_data_processed b
@@ -466,13 +473,14 @@ def get_best_worst_books(limit: int = 20, db_path: str = "books_database.db") ->
     }
 
 
+
 # =================
 # 7. ANÁLISE DE DESEMPENHO DE EDITORAS
 # =================
 
 def get_best_worst_publishers(limit: int = 15, db_path: str = "books_database.db") -> dict:
     """
-    Identifica editoras com melhor e pior desempenho.
+    Identifica editoras com melhor e pior desempenho - SQLite compatible
     """
     
     # Query para melhores editoras
@@ -486,12 +494,22 @@ def get_best_worst_publishers(limit: int = 15, db_path: str = "books_database.db
             SUM(CASE WHEN r.sentimento = 'positivo' THEN 1 ELSE 0 END) * 100.0 / COUNT(r.sentimento) as pct_positivo,
             ROUND(COUNT(r.sentimento) * 1.0 / COUNT(DISTINCT b.Title_padrao), 1) as reviews_por_livro,
             
-            -- Score de performance da editora
+            -- Score de performance da editora (sem LOG)
             (
                 (AVG(r.compound) + 1) * 40 +  -- Qualidade do sentimento
                 (SUM(CASE WHEN r.sentimento = 'positivo' THEN 1 ELSE 0 END) * 100.0 / COUNT(r.sentimento)) * 0.4 +  -- % positivo
-                LOG(COUNT(DISTINCT b.Title_padrao) + 1) * 10 +  -- Volume de livros
-                LOG(COUNT(r.sentimento) + 1) * 5  -- Engajamento
+                (CASE 
+                    WHEN COUNT(DISTINCT b.Title_padrao) <= 3 THEN 10
+                    WHEN COUNT(DISTINCT b.Title_padrao) <= 10 THEN 20
+                    WHEN COUNT(DISTINCT b.Title_padrao) <= 20 THEN 30
+                    ELSE 40
+                END) +  -- Volume de livros
+                (CASE 
+                    WHEN COUNT(r.sentimento) <= 20 THEN 5
+                    WHEN COUNT(r.sentimento) <= 100 THEN 15
+                    WHEN COUNT(r.sentimento) <= 500 THEN 25
+                    ELSE 35
+                END)  -- Engajamento
             ) as performance_score
             
         FROM books_data_processed b
@@ -528,11 +546,16 @@ def get_best_worst_publishers(limit: int = 15, db_path: str = "books_database.db
             SUM(CASE WHEN r.sentimento = 'negativo' THEN 1 ELSE 0 END) * 100.0 / COUNT(r.sentimento) as pct_negativo,
             ROUND(COUNT(r.sentimento) * 1.0 / COUNT(DISTINCT b.Title_padrao), 1) as reviews_por_livro,
             
-            -- Score de problema da editora
+            -- Score de problema da editora (sem LOG)
             (
                 (1 - AVG(r.compound)) * 40 +  -- Sentimento ruim
                 (SUM(CASE WHEN r.sentimento = 'negativo' THEN 1 ELSE 0 END) * 100.0 / COUNT(r.sentimento)) * 0.6 +  -- % negativo
-                LOG(COUNT(DISTINCT b.Title_padrao) + 1) * 5  -- Volume
+                (CASE 
+                    WHEN COUNT(DISTINCT b.Title_padrao) <= 3 THEN 5
+                    WHEN COUNT(DISTINCT b.Title_padrao) <= 10 THEN 10
+                    WHEN COUNT(DISTINCT b.Title_padrao) <= 20 THEN 15
+                    ELSE 20
+                END)  -- Volume
             ) as problema_score
             
         FROM books_data_processed b
