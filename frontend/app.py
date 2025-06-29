@@ -22,10 +22,6 @@ def download_database():
         file_id = "1kSwCxOZ9se4O3Jmz1UJVxRXj_iZ1ylpi"  # Id do arquivo no GDrive
         gdown.download(id=file_id, output=db_path, quiet=False)
         st.success("Banco de dados baixado com sucesso!")
-    else:
-        #st.info("Banco de dados já existe, usando arquivo local.")
-
-
 
 # Importar funções de consulta
 try:
