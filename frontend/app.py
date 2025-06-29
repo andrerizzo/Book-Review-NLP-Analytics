@@ -23,7 +23,7 @@ def download_database():
         gdown.download(id=file_id, output=db_path, quiet=False)
         st.success("Banco de dados baixado com sucesso!")
     else:
-        st.info("Banco de dados já existe, usando arquivo local.")
+        #st.info("Banco de dados já existe, usando arquivo local.")
 
 
 
