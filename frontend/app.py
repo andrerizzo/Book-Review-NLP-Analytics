@@ -10,6 +10,22 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import os
 import sys
+import gdown
+
+
+#Fazer download da base a partir do GDrive
+def download_database():
+    """Faz download do banco de dados do Google Drive se não existir localmente."""
+    db_path = "books_database.db"
+    if not os.path.exists(db_path):
+        st.info("Baixando banco de dados do Google Drive...")
+        url = "https://drive.google.com/file/d/1xDblPfCXZwKcmHJ1rtJLQSmlGRhYGkeg/view?usp=sharing"  # Link do arquivo no GDrive
+        gdown.download(url, db_path, quiet=False)
+        st.success("Banco de dados baixado com sucesso!")
+    else:
+        st.info("Banco de dados já existe, usando arquivo local.")
+
+
 
 # Importar funções de consulta
 try:
